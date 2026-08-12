@@ -1,0 +1,10 @@
+[project]
+name = "chicago311"
+version = "0.1.0"
+description = "Chicago 311 Service Requests Dataset ELT Pipeline"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "dbt-core>=1.12.1",
+    "dbt-duckdb>=1.11.0",
+]
