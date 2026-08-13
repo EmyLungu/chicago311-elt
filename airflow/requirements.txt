@@ -1,0 +1,4 @@
+duckdb==1.5.5
+dbt-duckdb==1.11.0
+astronomer-cosmos==1.15.1
+sodapy==2.2.0
