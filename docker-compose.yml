@@ -18,11 +18,11 @@ x-airflow-common: &airflow-common
     SHOPNOVA_OUTPUT_DIR: /opt/airflow/output
     DBT_PROFILES_DIR: /opt/airflow/dbt
     _PIP_ADDITIONAL_REQUIREMENTS: >-
-      ${_PIP_ADDITIONAL_REQUIREMENTS:-duckdb==1.2.1 dbt-duckdb==1.9.2 astronomer-cosmos==1.9.2}
+      ${_PIP_ADDITIONAL_REQUIREMENTS:-duckdb==1.5.5 dbt-duckdb==1.11.0 astronomer-cosmos==1.15.1 sodapy==2.2.0}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./scripts:/opt/airflow/scripts
-    - ./dbt:/opt/airflow/dbt
+    - ./chicago311dbt:/opt/airflow/chicago311dbt
     - ./data:/opt/airflow/data
     - ./warehouse:/opt/airflow/warehouse
     - ./output:/opt/airflow/output

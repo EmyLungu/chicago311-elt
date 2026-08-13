@@ -10,3 +10,9 @@ wheels/
 
 # Virtual environments
 .venv
+
+# duckdb data
+data
+
+logs
+.user.yml

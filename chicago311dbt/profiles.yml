@@ -1,0 +1,7 @@
+chicago311dbt:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      threads: 4
+      schema: main

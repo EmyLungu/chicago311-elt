@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: chicago311_raw
+    schema: bronze
+    tables:
+      - name: raw_chicago311
+        columns:
+          - name: sr_number
+            tests:
+              - unique
+              - not_null
