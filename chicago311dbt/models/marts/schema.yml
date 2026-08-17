@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: fct_service_requests
+    columns:
+      - name: sr_number
+        tests:
+          - unique
+          - not_null

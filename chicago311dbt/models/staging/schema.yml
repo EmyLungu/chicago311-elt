@@ -12,6 +12,12 @@ models:
         tests:
           - not_null
 
+      - name: community_area_id
+        tests:
+          - not_null:
+              config:
+                severity: warn
+
     tests:
       - dbt_utils.expression_is_true:
           arguments:
