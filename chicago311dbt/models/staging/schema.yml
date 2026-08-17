@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: stg_chicago311
+    columns:
+      - name: sr_number
+        tests:
+          - unique
+          - not_null
+
+      - name: status
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "closed_date >= created_date or closed_date is null"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "(latitude >= 41.6 and latitude <= 42.1) or latitude is null"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "(longitude >= -87.95 and longitude <= -87.5) or longitude is null"
