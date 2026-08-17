@@ -17,6 +17,10 @@ from config import (
 
 def get_last_watermark():
     last_watermark = DEFAULT_START_WATERMARK
+
+    if not DUCKDB_PATH.is_file():
+        return last_watermark
+
     with duckdb.connect(str(DUCKDB_PATH), read_only=True) as conn:
         row = conn.execute(
             "SELECT last_run_date FROM watermark_control "
@@ -73,6 +77,9 @@ def extract_to_parquet(**context) -> str | None:
         return None
 
     df = pd.DataFrame.from_records(all_records)
+    if "street_type" in df.columns:
+        df["street_type"] = df["street_type"].astype(str)
+
     batch_ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     parquet_path = BRONZE_DIR / f"raw_311_{batch_ts}.parquet"
     df.to_parquet(parquet_path, index=False)
