@@ -29,7 +29,7 @@ def load_parquet_to_duckdb(**context) -> None:
 
         conn.execute(
             """
-            INSERT INTO bronze.raw_chicago311
+            INSERT INTO bronze.raw_chicago311 BY NAME
             SELECT * FROM read_parquet(?, union_by_name=True);
             """,
             [parquet_path],
