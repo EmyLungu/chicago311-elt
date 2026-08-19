@@ -7,3 +7,55 @@ models:
         tests:
           - unique
           - not_null
+
+      - name: ward_map_key
+        tests:
+          - relationships:
+              to: ref('dim_ward')
+              field: ward_map_key
+
+      - name: service_type_key
+        tests:
+          - relationships:
+              to: ref('dim_service_type')
+              field: service_type_key
+
+      - name: geography_key
+        tests:
+          - relationships:
+              to: ref('dim_geography')
+              field: geography_key
+
+      - name: created_date_key
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+
+  - name: dim_ward
+    columns:
+      - name: ward_map_key
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_service_type
+    columns:
+      - name: service_type_key
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_location
+    columns:
+      - name: location_key
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_date
+    columns:
+      - name: date_key
+        tests:
+          - unique
+          - not_null
