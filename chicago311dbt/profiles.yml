@@ -3,6 +3,6 @@ chicago311dbt:
   outputs:
     dev:
       type: duckdb
-      path: ../data/chicago311.duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../data/chicago311.duckdb') }}"
       threads: 4
       schema: main

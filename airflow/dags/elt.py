@@ -35,7 +35,7 @@ with DAG(
     start_date=datetime(2026, 8, 1),
     schedule="@daily",
     catchup=False,
-    max_active_tasks=1,
+    max_active_tasks=16,
     tags=["chicago311", "duckdb", "dbt"],
 ) as dag:
     start = EmptyOperator(task_id="start")
@@ -63,6 +63,8 @@ with DAG(
         operator_args={
             "install_deps": True,
             "append_env": True,
+            "env": {"DUCKDB_PATH": "/opt/airflow/data/chicago311.duckdb"},
+            "dbt_extra_flags": ["--threads", "1"],
         },
     )
 

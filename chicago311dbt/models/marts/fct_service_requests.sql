@@ -6,6 +6,25 @@
     )
 }}
 
+with dim_location_dedup as (
+    select
+        coalesce(community_area_id, -1) as community_area_id,
+        coalesce(zip_code, '') as zip_code,
+        coalesce(police_beat, '') as police_beat,
+        min(location_key) as location_key
+    from {{ ref('dim_location') }}
+    group by 1, 2, 3
+),
+
+dim_service_type_dedup as (
+    select
+        coalesce(sr_type, '') as sr_type,
+        coalesce(sr_short_code, '') as sr_short_code,
+        min(service_type_key) as service_type_key
+    from {{ ref('dim_service_type') }}
+    group by 1, 2
+)
+
 select
     -- Primary Key
     r.sr_number,
@@ -50,14 +69,16 @@ from {{ ref('stg_chicago311') }} r
 left join {{ ref('dim_ward') }} w
     on r.ward_id = w.ward_id
    and r.created_date >= w.effective_from
-   and r.created_date <= w.effective_to
-left join {{ ref('dim_service_type') }} st
-    on coalesce(r.sr_type, '') = coalesce(st.sr_type, '')
-   and coalesce(r.sr_short_code, '') = coalesce(st.sr_short_code, '')
-left join {{ ref('dim_location') }} g
-    on coalesce(r.community_area_id, -1) = coalesce(g.community_area_id, -1)
-   and coalesce(r.zip_code, '') = coalesce(g.zip_code, '')
-   and coalesce(r.police_beat, '') = coalesce(g.police_beat, '')
+   and (r.created_date <= w.effective_to or w.effective_to is null)
+
+left join dim_service_type_dedup st
+    on coalesce(r.sr_type, '') = st.sr_type
+   and coalesce(r.sr_short_code, '') = st.sr_short_code
+
+left join dim_location_dedup g
+    on coalesce(r.community_area_id, -1) = g.community_area_id
+   and coalesce(r.zip_code, '') = g.zip_code
+   and coalesce(r.police_beat, '') = g.police_beat
 
 {% if is_incremental() %}
     where coalesce(last_modified_date, created_date) >= (

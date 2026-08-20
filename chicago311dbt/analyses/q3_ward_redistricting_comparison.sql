@@ -48,4 +48,4 @@ select
 from historical_aggregated h
 full outer join current_aggregated c 
     on h.ward_id = c.ward_id
-order by abs(volume_difference) desc;
+order by abs(volume_difference) desc

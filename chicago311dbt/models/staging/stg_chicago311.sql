@@ -1,8 +1,16 @@
+{% set source_relation = source('chicago311_raw', 'raw_chicago311') %}
+{% set columns = adapter.get_columns_in_relation(source_relation) %}
+{% set column_names = columns | map(attribute='name') | list %}
+
 select
     -- Identifiers
     nullif(trim(sr_number), '') as sr_number,
     nullif(trim(parent_sr_number), '') as parent_sr_number,
-    nullif(trim(legacy_sr_number), '') as legacy_sr_number,
+    {% if 'legacy_sr_number' in column_names %}
+        nullif(trim(raw.legacy_sr_number), '') as legacy_sr_number,
+    {% else %}
+        cast(null as varchar) as legacy_sr_number,
+    {% endif %}
 
     -- Categorical
     upper(trim(sr_type)) as sr_type,
@@ -43,7 +51,11 @@ select
     nullif(trim(police_district), '') as police_district,
     nullif(trim(police_beat), '') as police_beat,
     nullif(trim(precinct), '') as precinct,
-    nullif(trim(sanitation_division_days), '') as sanitation_division_days,
+    {% if 'sanitation_division_days' in column_names %}
+        nullif(trim(sanitation_division_days), '') as sanitation_division_days,
+    {% else %}
+        cast(null as varchar) as sanitation_division_days,
+    {% endif %}
     -- Coordinates
     x_coordinate::double as x_coordinate,
     y_coordinate::double as y_coordinate,

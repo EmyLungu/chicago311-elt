@@ -49,4 +49,4 @@ yoy_comparison as (
 
 select *
 from yoy_comparison
-order by current_year_median_days desc;
+order by current_year_median_days desc

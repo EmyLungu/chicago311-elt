@@ -27,7 +27,8 @@ execution_config = ExecutionConfig(
 )
 
 render_config = RenderConfig(
-    test_behavior=TestBehavior.AFTER_EACH,
+    test_behavior=TestBehavior.AFTER_ALL,
+    select=["path:seeds", "path:models", "path:snapshots"],
     exclude=["example"],
 )
 

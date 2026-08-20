@@ -37,4 +37,4 @@ select
 from flagged_duplicates
 group by sr_type
 having count(*) >= 100
-order by duplicate_ratio desc;
+order by duplicate_ratio desc
