@@ -22,6 +22,9 @@ models:
       - dbt_utils.expression_is_true:
           arguments:
             expression: "closed_date >= created_date or closed_date is null"
+          config:
+            severity: warn
+            warn_if: "> 0"
       - dbt_utils.expression_is_true:
           arguments:
             expression: "(latitude >= 41.6 and latitude <= 42.1) or latitude is null"

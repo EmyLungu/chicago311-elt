@@ -1,16 +1,8 @@
-{% set source_relation = source('chicago311_raw', 'raw_chicago311') %}
-{% set columns = adapter.get_columns_in_relation(source_relation) %}
-{% set column_names = columns | map(attribute='name') | list %}
-
 select
     -- Identifiers
     nullif(trim(sr_number), '') as sr_number,
     nullif(trim(parent_sr_number), '') as parent_sr_number,
-    {% if 'legacy_sr_number' in column_names %}
-        nullif(trim(raw.legacy_sr_number), '') as legacy_sr_number,
-    {% else %}
-        cast(null as varchar) as legacy_sr_number,
-    {% endif %}
+    nullif(trim(legacy_sr_number), '') as legacy_sr_number,
 
     -- Categorical
     upper(trim(sr_type)) as sr_type,
@@ -41,21 +33,17 @@ select
     upper(trim(street_type)) as street_type,
     upper(trim(city)) as city,
     upper(trim(state)) as state,
-    nullif(trim(zip_code), '') as zip_code,
+    nullif(trim(zip_code::varchar), '') as zip_code,
     -- Administrative
     ward::int as ward_id,
     community_area::int as community_area_id,
-    nullif(trim(electrical_district), '') as electrical_district,
+    nullif(trim(electrical_district::varchar), '') as electrical_district,
     nullif(trim(electricity_grid), '') as electricity_grid,
-    nullif(trim(police_sector), '') as police_sector,
+    nullif(trim(police_sector::varchar), '') as police_sector,
     nullif(trim(police_district), '') as police_district,
     nullif(trim(police_beat), '') as police_beat,
-    nullif(trim(precinct), '') as precinct,
-    {% if 'sanitation_division_days' in column_names %}
-        nullif(trim(sanitation_division_days), '') as sanitation_division_days,
-    {% else %}
-        cast(null as varchar) as sanitation_division_days,
-    {% endif %}
+    nullif(trim(precinct::varchar), '') as precinct,
+    nullif(trim(sanitation_division_days), '') as sanitation_division_days,
     -- Coordinates
     x_coordinate::double as x_coordinate,
     y_coordinate::double as y_coordinate,
