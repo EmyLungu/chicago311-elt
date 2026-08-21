@@ -1,4 +1,6 @@
 from datetime import datetime, timezone
+import os
+from pathlib import Path
 
 import pandas as pd
 import duckdb
@@ -96,3 +98,41 @@ def extract_to_parquet(**context) -> str | None:
     )
 
     return str(parquet_path)
+
+
+def extract_from_file_to_parquet(**context):
+    file_path_param = context["params"]["file_path"]
+    file_path = str(Path(file_path_param).resolve())
+
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Input file not found at: {file_path}")
+
+    BRONZE_DIR.mkdir(parents=True, exist_ok=True)
+
+    target_parquet_path = str(
+        BRONZE_DIR / f"dataset_batch_{context['ds_nodash']}.parquet"
+    )
+
+    with duckdb.connect() as conn:
+        conn.execute("SET max_memory='4GB';")
+
+        if file_path.endswith(".csv"):
+            conn.execute(
+                f"""
+                COPY (SELECT * FROM read_csv_auto(?, ignore_errors=true))
+                TO '{target_parquet_path}'
+                (FORMAT PARQUET, COMPRESSION 'SNAPPY', PER_THREAD_OUTPUT FALSE);
+                """,
+                [file_path],
+            )
+        else:
+            target_parquet_path = file_path
+
+        row_count = conn.execute(
+            f"SELECT COUNT(*) FROM read_parquet('{target_parquet_path}')"
+        ).fetchone()[0]
+
+    context["ti"].xcom_push(
+        key="extraction_metadata",
+        value={"parquet_path": target_parquet_path, "row_count": row_count},
+    )

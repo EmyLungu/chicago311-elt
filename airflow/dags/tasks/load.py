@@ -12,7 +12,7 @@ def load_parquet_to_duckdb(**context) -> None:
         return
 
     parquet_path = meta["parquet_path"]
-    latest_watermark = meta["latest_watermark"]
+    latest_watermark = meta.get("latest_watermark")
 
     DUCKDB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
@@ -35,30 +35,30 @@ def load_parquet_to_duckdb(**context) -> None:
             [parquet_path],
         )
 
-        conn.execute("""
-        CREATE TABLE IF NOT EXISTS watermark_control (
-            dataset_name VARCHAR PRIMARY KEY,
-            last_run_date VARCHAR NOT NULL,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-        """)
+        if latest_watermark:
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS watermark_control (
+                dataset_name VARCHAR PRIMARY KEY,
+                last_run_date VARCHAR NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """)
 
-        conn.execute(
-            """
-            INSERT INTO watermark_control
-                (dataset_name, last_run_date, updated_at)
-            VALUES (?, ?, CURRENT_TIMESTAMP)
-            ON CONFLICT (dataset_name) DO UPDATE SET
-                last_run_date = EXCLUDED.last_run_date,
-                updated_at = EXCLUDED.updated_at;
-            """,
-            [DATASET_IDENTIFIER, latest_watermark],
-        )
+            conn.execute(
+                """
+                INSERT INTO watermark_control
+                    (dataset_name, last_run_date, updated_at)
+                VALUES (?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT (dataset_name) DO UPDATE SET
+                    last_run_date = EXCLUDED.last_run_date,
+                    updated_at = EXCLUDED.updated_at;
+                """,
+                [DATASET_IDENTIFIER, latest_watermark],
+            )
 
-        print(
-            f"Loaded {parquet_path} to DuckDB."
-            f"New watermark: {latest_watermark}"
-        )
+            print(f"New watermark: {latest_watermark}")
+
+        print(f"Loaded {parquet_path} to DuckDB.")
 
 
 def validate_ingestion() -> None:
