@@ -27,7 +27,8 @@ execution_config = ExecutionConfig(
 )
 
 render_config = RenderConfig(
-    test_behavior=TestBehavior.AFTER_EACH,
+    test_behavior=TestBehavior.AFTER_ALL,
+    select=["path:seeds", "path:models", "path:snapshots"],
     exclude=["example"],
 )
 
@@ -48,7 +49,7 @@ DUCKDB_PATH = Path(
 )
 
 DATASET_IDENTIFIER = "v6vf-nfxy"
-DEFAULT_START_WATERMARK = "2026-08-12T00:00:00.000"
+DEFAULT_START_WATERMARK = "2026-08-20T00:00:00.000"
 
 CONNECTION_ID = "socrata_chicago311"
 BATCH_SIZE = 50000

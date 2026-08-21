@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from airflow import DAG
+from airflow.models import Param
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.decorators import task
@@ -15,7 +16,7 @@ from config import (
     render_config,
     default_args,
 )
-from tasks.extract import extract_to_parquet
+from tasks.extract import extract_from_file_to_parquet
 from tasks.load import load_parquet_to_duckdb, validate_ingestion
 
 
@@ -29,19 +30,27 @@ def check_extraction(**context) -> str:
 
 
 with DAG(
-    dag_id="chicago311pipeline",
-    description=("ELT pipeline for the Chicago 311 Dataset"),
+    dag_id="chicago311_manual_pipeline",
+    description=(
+        "ELT pipeline for the Chicago 311 Dataset with Manual File Input"
+    ),
     default_args=default_args,
     start_date=datetime(2026, 8, 1),
-    schedule="@daily",
+    schedule=None,
     catchup=False,
     max_active_tasks=16,
     tags=["chicago311", "duckdb", "dbt"],
+    params={
+        "file_path": Param(
+            default="/opt/airflow/data/datasets/fulldata_20AUG.csv",
+            type="string",
+        ),
+    },
 ) as dag:
     start = EmptyOperator(task_id="start")
 
     extract = PythonOperator(
-        task_id="extract_bronze", python_callable=extract_to_parquet
+        task_id="extract_bronze", python_callable=extract_from_file_to_parquet
     )
     extract_check = check_extraction()
 
