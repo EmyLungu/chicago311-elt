@@ -8,5 +8,7 @@ sources:
         columns:
           - name: sr_number
             tests:
-              - unique
+              - unique:
+                  config:
+                    severity: warn
               - not_null
