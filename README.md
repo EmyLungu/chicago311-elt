@@ -3,6 +3,8 @@
 ##### Project for the Data Engineering Summer Practice 2026 @ Levi9
 ##### Author: Lungu Emanuel-Leonard
 
+##### [Presentation Link](https://docs.google.com/presentation/d/1_Sv7gftP_EhvOn47lRdILYNSPtRSEii1d2OwXlempp0/edit?usp=sharing)
+
 
 ## Executive Summary
 This project delivers an automated, end-to-end ELT data pipeline for Chicago 311 service requests using Apache Airflow, DuckDB, and dbt. The architecture handles API/file ingestion, enforces data quality tests, builds an incremental star schema, and models slowly changing dimensions (SCD Type 2) to track historical ward boundary updates and request status lifecycle changes.
